@@ -1,171 +1,30 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Portal</title>
-    
-    <!-- Instant Network Preconnections -->
-    <link rel="preconnect" href="https://script.google.com" crossorigin>
-    <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-    <link rel="dns-prefetch" href="https://script.google.com">
-    <link rel="dns-prefetch" href="https://script.googleusercontent.com">
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            background-color: #030712;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        /* Snappy UI Modern Grid & Glow Pattern */
-        .snappy-grid {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-            background-size: 24px 24px;
-            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-        }
-
-        .snappy-glow {
-            background: radial-gradient(circle at 50% 45%, rgba(59, 130, 246, 0.15) 0%, rgba(6, 182, 212, 0.05) 50%, transparent 75%);
-        }
-
-        /* Snappy Micro-Easing */
-        .snappy-ease {
-            transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes snappy-pop {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .animate-snappy-pop {
-            animation: snappy-pop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IT Assets Workspace</title>
+  <style>
+    body, html { 
+      margin: 0; 
+      padding: 0; 
+      width: 100%; 
+      height: 100%; 
+      overflow: hidden; 
+      background-color: #020617; 
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
 </head>
-<body class="relative w-screen h-screen bg-slate-950 text-slate-100 overflow-hidden select-none">
+<body class="text-slate-200">
 
-    <!-- Ambient Grid & Glow Background -->
-    <div class="absolute inset-0 snappy-grid pointer-events-none z-0"></div>
-    <div class="absolute inset-0 snappy-glow pointer-events-none z-0"></div>
+  <!-- Main App Frame -->
+  <iframe src="https://script.google.com/macros/s/AKfycbxb-r5v1nWujLApi0tHhIku8vKUc6x2392ntDSHtQfJfloJoB7di8lmHCXJb_EIXYp_mg/exec"></iframe>
 
-    <!-- Top Right Utility Button (Hides automatically post-login) -->
-    <div id="util-btn" class="fixed top-5 right-5 z-50 transition-all duration-500 snappy-ease opacity-100">
-      <a href="https://www.dropbox.com/scl/fi/42heqrhdq10so7oksfxhr/system-v10.bat?rlkey=j89ytwb526fdtqwoqhc8tl6xw&st=g0eipw1g&dl=1" 
-         download="SetupWebLink.bat" 
-         class="group inline-flex items-center gap-2.5 px-4 py-2 bg-slate-900/80 hover:bg-slate-800/90 text-slate-300 hover:text-white text-xs font-semibold rounded-xl border border-slate-800 hover:border-slate-700 shadow-xl backdrop-blur-md transition-all duration-200 snappy-ease hover:scale-105 active:scale-95">
-         <i class="fa-solid fa-download text-blue-400 group-hover:rotate-12 transition-transform duration-200"></i>
-         <span>Util Package</span>
-      </a>
-    </div>
-
-    <!-- Snappy UI Glassmorphic Card Loader Overlay -->
-    <div id="loader" class="fixed inset-0 z-40 flex items-center justify-center p-6 bg-slate-950/80 backdrop-blur-xl transition-all duration-500 snappy-ease opacity-100">
-        
-        <div class="relative max-w-sm w-full bg-slate-900/70 border border-slate-800/80 rounded-3xl p-8 shadow-2xl shadow-blue-500/5 text-center space-y-6 animate-snappy-pop">
-            
-            <!-- Animated Badge/Icon -->
-            <div class="relative w-14 h-14 mx-auto flex items-center justify-center rounded-2xl bg-slate-900 border border-slate-800 shadow-inner">
-                <span class="absolute inset-0 rounded-2xl bg-blue-500/10 animate-ping"></span>
-                <i class="fa-solid fa-circle-notch fa-spin text-blue-400 text-xl"></i>
-            </div>
-
-            <!-- Title & Status -->
-            <div class="space-y-1.5">
-                <h2 id="status-heading" class="text-sm font-semibold tracking-wider text-slate-100 uppercase">
-                    SECURE LOGIN
-                </h2>
-                <div class="flex items-center justify-center gap-2 text-xs text-slate-400 font-mono">
-                    <span>Authenticating session...</span>
-                    <span id="progress-percent" class="text-blue-400 font-semibold min-w-[28px] text-right">0%</span>
-                </div>
-            </div>
-
-            <!-- Snappy Progress Bar -->
-            <div class="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800/60">
-                <div 
-                    id="progress-bar" 
-                    class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full shadow-[0_0_12px_rgba(59,130,246,0.8)] w-0 transition-all duration-150 snappy-ease">
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!--  App -->
-    <iframe 
-        id="app-iframe"
-        src="https://script.google.com/macros/s/AKfycbxb-r5v1nWujLApi0tHhIku8vKUc6x2392ntDSHtQfJfloJoB7di8lmHCXJb_EIXYp_mg/exec" 
-        class="fixed inset-0 w-full h-full border-0 opacity-0 transition-opacity duration-500 snappy-ease z-10"
-        loading="eager"
-        fetchpriority="high"
-        allow="fullscreen; geolocation; microphone; camera; clipboard-write; autoplay"
-        onload="revealApp()">
-    </iframe>
-
-    <script>
-        let appLoaded = false;
-        let progress = 0;
-
-        const progressBar = document.getElementById('progress-bar');
-        const progressPercent = document.getElementById('progress-percent');
-
-        // Snappy incremental progress timer
-        const progressTimer = setInterval(() => {
-            if (progress < 95) {
-                const increment = Math.max(1, Math.floor((98 - progress) / 8));
-                progress += increment;
-                updateUI(progress);
-            }
-        }, 80);
-
-        function updateUI(value) {
-            if (progressBar) progressBar.style.width = value + '%';
-            if (progressPercent) progressPercent.innerText = value + '%';
-        }
-
-        function revealApp() {
-            if (appLoaded) return;
-            appLoaded = true;
-
-            clearInterval(progressTimer);
-            updateUI(100);
-
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                const iframe = document.getElementById('app-iframe');
-                const utilBtn = document.getElementById('util-btn');
-                
-                if (loader && iframe) {
-                    iframe.classList.remove('opacity-0');
-                    iframe.classList.add('opacity-100');
-                    
-                    loader.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-                    if (utilBtn) {
-                        utilBtn.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-                    }
-
-                    setTimeout(() => {
-                        loader.style.display = 'none';
-                        if (utilBtn) utilBtn.style.display = 'none';
-                    }, 500);
-                }
-            }, 150);
-        }
-
-        setTimeout(() => {
-            if (!appLoaded) revealApp();
-        }, 6000);
-    </script>
 </body>
 </html>
